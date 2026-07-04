@@ -17,6 +17,7 @@ import {
   Avatar,
   List,
   ListItem,
+  ListItemButton,
   ListItemAvatar,
   ListItemText,
   Drawer,
@@ -65,7 +66,6 @@ const InstitutionDashboard = () => {
   const { user, logout } = useAuth();
   const { account, formatAddress, isDemoMode } = useBlockchain();
   const { 
-    credentials, 
     credentialTypes, 
     issueCredential, 
     getCredentialsByIssuer,
@@ -102,7 +102,7 @@ const InstitutionDashboard = () => {
     },
     { 
       label: 'Pending Verifications', 
-      value: Math.floor(Math.random() * 10), 
+      value: issuedCredentials.filter(c => !c.isRevoked).length > 0 ? Math.min(issuedCredentials.filter(c => !c.isRevoked).length, 3) : 0, 
       icon: <HourglassEmpty />,
       color: '#ff9800' 
     },
@@ -154,6 +154,8 @@ const InstitutionDashboard = () => {
         backgroundColor: '#1a1a2e',
         color: 'white',
         p: 3,
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       {/* Profile */}
@@ -186,12 +188,15 @@ const InstitutionDashboard = () => {
       {/* Menu Items */}
       <List>
         {sidebarItems.map((item) => (
-          <ListItem
+          <ListItemButton
             key={item.id}
-            button
             selected={activeSection === item.id}
             onClick={() => {
-              setActiveSection(item.id);
+              if (item.id === 'issue') {
+                setIssueDialogOpen(true);
+              } else {
+                setActiveSection(item.id);
+              }
               setMobileDrawerOpen(false);
             }}
             sx={{
@@ -219,7 +224,7 @@ const InstitutionDashboard = () => {
                 fontWeight: activeSection === item.id ? 600 : 400,
               }}
             />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
 
@@ -385,10 +390,6 @@ const InstitutionDashboard = () => {
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'issue':
-        setIssueDialogOpen(true);
-        setActiveSection('dashboard');
-        return <DashboardContent />;
       case 'history':
         return <HistoryContent />;
       case 'settings':

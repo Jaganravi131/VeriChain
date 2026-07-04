@@ -3,30 +3,17 @@
  * Handles uploading and retrieving credential metadata from IPFS
  */
 
-const PINATA_API_KEY = process.env.REACT_APP_PINATA_API_KEY;
-const PINATA_SECRET_KEY = process.env.REACT_APP_PINATA_SECRET_KEY;
-const PINATA_JWT = process.env.REACT_APP_PINATA_JWT;
+// NOTE: Pinata API keys are NOT stored in client code.
+// Authenticated operations go through the Vercel serverless proxy at /api/ipfs.
+// Only the public gateway URL is kept client-side (for reading, no auth needed).
 const PINATA_GATEWAY = process.env.REACT_APP_PINATA_GATEWAY || 'https://gateway.pinata.cloud/ipfs/';
 
 class IPFSService {
   constructor() {
-    this.pinataApiUrl = 'https://api.pinata.cloud';
-    this.isConfigured = !!(PINATA_API_KEY && PINATA_SECRET_KEY) || !!PINATA_JWT;
-  }
-
-  /**
-   * Get authorization headers for Pinata API
-   */
-  getAuthHeaders() {
-    if (PINATA_JWT) {
-      return {
-        Authorization: `Bearer ${PINATA_JWT}`,
-      };
-    }
-    return {
-      pinata_api_key: PINATA_API_KEY,
-      pinata_secret_api_key: PINATA_SECRET_KEY,
-    };
+    // Use Vercel serverless proxy for authenticated Pinata API calls
+    this.proxyApiUrl = '/api/ipfs';
+    // Check if the proxy is available (will be true on Vercel, false in local dev without proxy)
+    this.isConfigured = true; // Always try proxy first, fallback to demo mode
   }
 
   /**
@@ -42,11 +29,10 @@ class IPFSService {
     }
 
     try {
-      const response = await fetch(`${this.pinataApiUrl}/pinning/pinJSONToIPFS`, {
+      const response = await fetch(`${this.proxyApiUrl}?action=pin-json`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...this.getAuthHeaders(),
         },
         body: JSON.stringify({
           pinataContent: metadata,
@@ -104,9 +90,8 @@ class IPFSService {
         cidVersion: 1,
       }));
 
-      const response = await fetch(`${this.pinataApiUrl}/pinning/pinFileToIPFS`, {
+      const response = await fetch(`${this.proxyApiUrl}?action=pin-file`, {
         method: 'POST',
-        headers: this.getAuthHeaders(),
         body: formData,
       });
 
@@ -172,10 +157,7 @@ class IPFSService {
 
     try {
       const response = await fetch(
-        `${this.pinataApiUrl}/data/pinList?hashContains=${ipfsHash}`,
-        {
-          headers: this.getAuthHeaders(),
-        }
+        `${this.proxyApiUrl}?action=pin-status&hash=${ipfsHash}`
       );
 
       if (!response.ok) {
@@ -200,9 +182,8 @@ class IPFSService {
     }
 
     try {
-      const response = await fetch(`${this.pinataApiUrl}/pinning/unpin/${ipfsHash}`, {
+      const response = await fetch(`${this.proxyApiUrl}?action=unpin&hash=${ipfsHash}`, {
         method: 'DELETE',
-        headers: this.getAuthHeaders(),
       });
 
       if (!response.ok) {

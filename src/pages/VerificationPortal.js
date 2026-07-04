@@ -17,7 +17,7 @@ import {
   Tab,
   Tabs,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   IconButton,
 } from '@mui/material';
@@ -31,7 +31,6 @@ import {
   ContentCopy,
   OpenInNew,
 } from '@mui/icons-material';
-import { QRCodeSVG } from 'qrcode.react';
 import { jsPDF } from 'jspdf';
 import { useCredentials } from '../state/CredentialContext';
 import { useBlockchain } from '../state/BlockchainContext';
@@ -235,9 +234,8 @@ const VerificationPortal = () => {
                 </Typography>
                 <List dense>
                   {credentials.slice(0, 3).map((cred) => (
-                    <ListItem
+                    <ListItemButton
                       key={cred.id}
-                      button
                       onClick={() => {
                         setSearchQuery(cred.recipient);
                         setTab(0);
@@ -249,7 +247,7 @@ const VerificationPortal = () => {
                         primaryTypographyProps={{ variant: 'body2' }}
                         secondaryTypographyProps={{ variant: 'caption' }}
                       />
-                    </ListItem>
+                    </ListItemButton>
                   ))}
                 </List>
               </Box>

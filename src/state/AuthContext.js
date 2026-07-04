@@ -101,6 +101,7 @@ export const AuthProvider = ({ children }) => {
   // Initialize users and session on mount
   useEffect(() => {
     initializeAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initializeAuth = () => {
@@ -119,7 +120,8 @@ export const AuthProvider = ({ children }) => {
         const sessionUser = users.find(u => u.id === session.userId);
         
         if (sessionUser && session.expiresAt > Date.now()) {
-          setUser(sessionUser);
+          const { password: _, ...sessionUserWithoutPassword } = sessionUser;
+          setUser(sessionUserWithoutPassword);
           setIsAuthenticated(true);
         } else {
           // Clear expired session

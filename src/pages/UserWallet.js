@@ -19,7 +19,7 @@ import {
   DialogContent,
   DialogActions,
   List,
-  ListItem,
+  ListItemButton,
   ListItemAvatar,
   ListItemText,
   useTheme,
@@ -34,10 +34,8 @@ import {
   Logout,
   Menu as MenuIcon,
   Close,
-  School,
   VerifiedUser,
   ContentCopy,
-  QrCode,
   Download,
   OpenInNew,
 } from '@mui/icons-material';
@@ -90,10 +88,14 @@ const UserWallet = () => {
     setShareDialogOpen(true);
   };
 
-  const handleCopyLink = () => {
-    const link = generateShareLink(selectedCredential?.id);
-    navigator.clipboard.writeText(link);
-    toast.success('Share link copied to clipboard!');
+  const handleCopyLink = async () => {
+    try {
+      const link = generateShareLink(selectedCredential?.id);
+      await navigator.clipboard.writeText(link);
+      toast.success('Share link copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy link');
+    }
   };
 
   const handleDownloadPDF = (credential) => {
@@ -170,6 +172,8 @@ const UserWallet = () => {
         backgroundColor: '#1a1a2e',
         color: 'white',
         p: 3,
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       {/* Profile */}
@@ -201,9 +205,8 @@ const UserWallet = () => {
       {/* Menu Items */}
       <List>
         {sidebarItems.map((item) => (
-          <ListItem
+          <ListItemButton
             key={item.id}
-            button
             selected={activeSection === item.id}
             onClick={() => {
               setActiveSection(item.id);
@@ -234,7 +237,7 @@ const UserWallet = () => {
                 fontWeight: activeSection === item.id ? 600 : 400,
               }}
             />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
 
@@ -397,9 +400,6 @@ const UserWallet = () => {
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'share':
-        setActiveSection('credentials');
-        return <CredentialsContent />;
       case 'settings':
         return <SettingsContent />;
       default:

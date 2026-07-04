@@ -14,7 +14,7 @@ import {
   Tooltip,
   Drawer,
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   useMediaQuery,
@@ -256,53 +256,50 @@ const Navbar = () => {
         <Box sx={{ width: 280, pt: 2 }}>
           <List>
             {navLinks.map((link) => (
-              <ListItem 
+              <ListItemButton 
                 key={link.path}
-                button 
                 component={Link} 
                 to={link.path}
                 onClick={() => setMobileDrawer(false)}
               >
                 <ListItemIcon>{link.icon}</ListItemIcon>
                 <ListItemText primary={link.label} />
-              </ListItem>
+              </ListItemButton>
             ))}
             
             {!isAuthenticated && (
               <>
-                <ListItem 
-                  button 
+                <ListItemButton 
                   component={Link} 
                   to="/auth"
                   onClick={() => setMobileDrawer(false)}
                 >
                   <ListItemIcon><AccountCircle /></ListItemIcon>
                   <ListItemText primary="Login" />
-                </ListItem>
-                <ListItem 
-                  button 
+                </ListItemButton>
+                <ListItemButton 
                   component={Link} 
                   to="/auth?tab=signup"
                   onClick={() => setMobileDrawer(false)}
                 >
                   <ListItemIcon><AccountCircle /></ListItemIcon>
                   <ListItemText primary="Sign Up" />
-                </ListItem>
+                </ListItemButton>
               </>
             )}
 
             {isAuthenticated && (
               <>
-                <ListItem button onClick={handleDashboard}>
+                <ListItemButton onClick={handleDashboard}>
                   <ListItemIcon>
                     {user?.type === 'institution' ? <Dashboard /> : <Wallet />}
                   </ListItemIcon>
                   <ListItemText primary={user?.type === 'institution' ? 'Dashboard' : 'My Wallet'} />
-                </ListItem>
-                <ListItem button onClick={handleLogout}>
+                </ListItemButton>
+                <ListItemButton onClick={handleLogout}>
                   <ListItemIcon><Logout /></ListItemIcon>
                   <ListItemText primary="Logout" />
-                </ListItem>
+                </ListItemButton>
               </>
             )}
           </List>

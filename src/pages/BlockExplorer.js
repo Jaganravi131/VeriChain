@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Container,
@@ -52,22 +52,22 @@ const BlockExplorer = () => {
   const [networkStats, setNetworkStats] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  useEffect(() => {
-    refreshStats();
-  }, []);
-
-  const refreshStats = async () => {
+  const refreshStats = useCallback(async () => {
     setIsRefreshing(true);
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     setNetworkStats(getNetworkStats());
     setIsRefreshing(false);
-  };
+  }, [getNetworkStats]);
+
+  useEffect(() => {
+    refreshStats();
+  }, [refreshStats]);
 
   // Combine transaction history with credential transactions
-  const allTransactions = [
-    ...transactionHistory,
-    ...credentials.map(cred => ({
+  const credentialTxs = credentials
+    .filter(cred => !transactionHistory.some(tx => tx.hash === cred.transactionHash))
+    .map(cred => ({
       id: cred.transactionHash || cred.id,
       hash: cred.transactionHash,
       type: 'CredentialIssued',
@@ -80,8 +80,12 @@ const BlockExplorer = () => {
         title: cred.title,
       },
       blockNumber: cred.blockNumber,
-      gasUsed: Math.floor(Math.random() * 100000 + 50000).toString(),
-    }))
+      gasUsed: '21000',
+    }));
+
+  const allTransactions = [
+    ...transactionHistory,
+    ...credentialTxs,
   ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   const filteredTransactions = allTransactions.filter(tx => {
@@ -98,9 +102,14 @@ const BlockExplorer = () => {
     return true;
   });
 
-  const handleCopy = (text) => {
-    navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard!');
+  const handleCopy = async (text) => {
+    try {
+      if (!text) throw new Error('No text to copy');
+      await navigator.clipboard.writeText(text);
+      toast.success('Copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy to clipboard');
+    }
   };
 
   const getStatusIcon = (status) => {

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Container, Typography, Grid, Link, IconButton, Divider } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+import { Box, Container, Typography, Grid, Link as MuiLink, IconButton, Divider } from '@mui/material';
 import { GitHub, Twitter, LinkedIn, Telegram } from '@mui/icons-material';
 
 const Footer = () => {
@@ -62,15 +63,15 @@ const Footer = () => {
               Platform
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Link href="/verify" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
+              <MuiLink component={RouterLink} to="/verify" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
                 Verify Credentials
-              </Link>
-              <Link href="/explorer" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
+              </MuiLink>
+              <MuiLink component={RouterLink} to="/explorer" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
                 Block Explorer
-              </Link>
-              <Link href="/developer" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
+              </MuiLink>
+              <MuiLink component={RouterLink} to="/developer" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
                 Developer Tools
-              </Link>
+              </MuiLink>
             </Box>
           </Grid>
 
@@ -80,15 +81,15 @@ const Footer = () => {
               Resources
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Link href="/about" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
+              <MuiLink component={RouterLink} to="/about" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
                 Documentation
-              </Link>
-              <Link href="#" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
+              </MuiLink>
+              <MuiLink href="#" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
                 API Reference
-              </Link>
-              <Link href="#" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
+              </MuiLink>
+              <MuiLink href="#" color="inherit" underline="hover" sx={{ color: 'grey.400', fontSize: '0.875rem' }}>
                 Smart Contract
-              </Link>
+              </MuiLink>
             </Box>
           </Grid>
 
@@ -128,12 +129,12 @@ const Footer = () => {
             © {new Date().getFullYear()} VeriChain. All rights reserved.
           </Typography>
           <Box sx={{ display: 'flex', gap: 3 }}>
-            <Link href="#" color="inherit" underline="hover" sx={{ color: 'grey.500', fontSize: '0.875rem' }}>
+            <MuiLink href="#" color="inherit" underline="hover" sx={{ color: 'grey.500', fontSize: '0.875rem' }}>
               Privacy Policy
-            </Link>
-            <Link href="#" color="inherit" underline="hover" sx={{ color: 'grey.500', fontSize: '0.875rem' }}>
+            </MuiLink>
+            <MuiLink href="#" color="inherit" underline="hover" sx={{ color: 'grey.500', fontSize: '0.875rem' }}>
               Terms of Service
-            </Link>
+            </MuiLink>
           </Box>
         </Box>
       </Container>

@@ -22,7 +22,6 @@ import {
   ArrowForward,
 } from '@mui/icons-material';
 import { useAuth } from '../state/AuthContext';
-import { useBlockchain } from '../state/BlockchainContext';
 import { toast } from 'react-toastify';
 
 const features = [
@@ -56,7 +55,6 @@ const stats = [
 const LandingPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, login } = useAuth();
-  const { isConnected } = useBlockchain();
   const [isStartingDemo, setIsStartingDemo] = useState(false);
 
   const handleStartDemo = async () => {

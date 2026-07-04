@@ -183,7 +183,7 @@ const DeveloperTools = () => {
                         placeholder="Enter command (try: credentials, users, network, account)"
                         value={codeInput}
                         onChange={(e) => setCodeInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleRunCode()}
+                        onKeyDown={(e) => e.key === 'Enter' && handleRunCode()}
                         sx={{ 
                           '& .MuiOutlinedInput-root': { 
                             fontFamily: 'monospace',

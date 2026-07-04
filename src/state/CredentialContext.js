@@ -238,7 +238,7 @@ export const CredentialProvider = ({ children }) => {
       
       // Search by tokenId, hash, or address
       if (query.tokenId) {
-        credentialToVerify = credentials.find(c => c.tokenId === query.tokenId);
+        credentialToVerify = credentials.find(c => String(c.tokenId) === String(query.tokenId));
       } else if (query.hash) {
         credentialToVerify = credentials.find(c => 
           c.transactionHash?.toLowerCase() === query.hash.toLowerCase() ||
@@ -287,7 +287,7 @@ export const CredentialProvider = ({ children }) => {
       }
 
       setCredentials(prev => prev.map(c => 
-        c.tokenId === tokenId ? { ...c, isRevoked: true } : c
+        String(c.tokenId) === String(tokenId) ? { ...c, isRevoked: true } : c
       ));
       
       toast.success('Credential revoked successfully');
@@ -335,7 +335,7 @@ export const CredentialProvider = ({ children }) => {
       pendingVerifications: verifications.filter(v => !v.isValid).length,
       recentVerifications: verifications.slice(0, 5),
     };
-  }, [credentials, verifications, user, account, getCredentialsByIssuer, getCredentialsByRecipient]);
+  }, [verifications, user, account, getCredentialsByIssuer, getCredentialsByRecipient]);
 
   const value = {
     credentials,

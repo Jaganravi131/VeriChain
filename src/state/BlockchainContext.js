@@ -38,6 +38,7 @@ export const BlockchainProvider = ({ children }) => {
       const interval = setInterval(fetchGasPrice, 30000);
       return () => clearInterval(interval);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, isDemoMode]);
 
   // Listen for wallet events
@@ -58,6 +59,7 @@ export const BlockchainProvider = ({ children }) => {
       window.removeEventListener('accountChanged', handleAccountChanged);
       window.removeEventListener('walletDisconnected', handleDisconnected);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchGasPrice = async () => {
@@ -155,9 +157,10 @@ export const BlockchainProvider = ({ children }) => {
       if (err.code === 4902 && targetNetwork) {
         // Network not added, try to add it
         try {
+          const { chainIdDecimal, ...networkParams } = targetNetwork;
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
-            params: [targetNetwork],
+            params: [networkParams],
           });
           setNetwork(targetNetwork);
         } catch (addError) {
@@ -182,25 +185,23 @@ export const BlockchainProvider = ({ children }) => {
   }, []);
 
   const updateTransactionStatus = useCallback((txId, status, receipt = null) => {
-    setPendingTransactions(prev => 
-      prev.map(tx => 
-        tx.id === txId ? { ...tx, status, receipt } : tx
-      )
-    );
-
     if (status === 'confirmed' || status === 'failed') {
-      setPendingTransactions(prev => prev.filter(tx => tx.id !== txId));
-      
-      setTransactionHistory(prev => {
-        const tx = prev.find(t => t.id === txId) || 
-          pendingTransactions.find(t => t.id === txId);
+      setPendingTransactions(prev => {
+        const tx = prev.find(t => t.id === txId);
         if (tx) {
-          return [{ ...tx, status, receipt, completedAt: new Date().toISOString() }, ...prev];
+          const completedTx = { ...tx, status, receipt, completedAt: new Date().toISOString() };
+          setTransactionHistory(history => [completedTx, ...history]);
         }
-        return prev;
+        return prev.filter(t => t.id !== txId);
       });
+    } else {
+      setPendingTransactions(prev => 
+        prev.map(tx => 
+          tx.id === txId ? { ...tx, status, receipt } : tx
+        )
+      );
     }
-  }, [pendingTransactions]);
+  }, []);
 
   const simulateTransaction = useCallback(async (type, data) => {
     // For demo mode, simulate transaction processing

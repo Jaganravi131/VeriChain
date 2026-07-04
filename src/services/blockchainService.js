@@ -159,9 +159,10 @@ class BlockchainService {
       } catch (switchError) {
         // If the network is not added, add it
         if (switchError.code === 4902) {
+          const { chainIdDecimal, ...networkParams } = this.network;
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
-            params: [this.network],
+            params: [networkParams],
           });
         } else {
           throw switchError;
